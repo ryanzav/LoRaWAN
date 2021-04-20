@@ -21,6 +21,8 @@ Then you can run tx_helium.py to send messages by specifying the msg and the fra
 
     python3 tx_helium.py --msg "Test" --frame 1
 
+If you leave out the arguments, "Test" will be used for the frame. If you initialized with `otaa_helium.py` a file called `.last_frame` will be created and set to `0`. `tx_helium.py` will automatically increment. If the frame count is off simply edit `.last_frame` to the last frame number recieved by Helium, or run `otaa_helium.py` again
+
 You can run rssi_helium.py which utilizes the OLED screen and buttons.
 
 This will sent a tranmission when it starts and whenever you press the middle button.
@@ -35,6 +37,6 @@ The script pulls the RSSI, the packet RSSI, and the SNR and displays it on the O
 
 ![alt text][pi]
 
-## TODO
-Automatically track frame number. 
-Automatically capture device registration info and put in keys.py.
+##TODO
+Automatically call otaa_helium if `.last_frame` is missing
+
