@@ -66,7 +66,10 @@ class LoRaWANotaa(LoRa):
         self.set_bw(9) #500Khz
         self.set_rx_crc(False)#TRUE
         self.set_mode(MODE.RXCONT)
-        
+        with open('.last_frame', 'w') as f:
+            f.write(str(frame))
+         
+
 
     def start(self):
         global frame
@@ -119,8 +122,15 @@ def main():
     parser.add_argument("--frame", help="Message frame")
     parser.add_argument("--msg", help="tokens file")
     args = parser.parse_args()
-    frame = int(args.frame)
-    msg = args.msg
+    if args.frame is None:
+        with open(".last_frame", 'r') as last_frame_file:
+            frame = int(last_frame_file.read()) + 1
+    else:
+        frame = int(args.frame)
+    if args.msg is None:
+        msg = "Test"
+    else:
+        msg = args.msg
     init()
 
 if __name__ == "__main__":
