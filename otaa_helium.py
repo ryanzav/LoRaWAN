@@ -10,10 +10,11 @@ from random import randrange
 import reset_ada
 import helium
 import keys
-
+from os import rename
 BOARD.setup()
 parser = LoRaArgumentParser("LoRaWAN sender")
 class LoRaWANotaa(LoRa):
+    keys_written = False
     def __init__(self, verbose = False):
         super(LoRaWANotaa, self).__init__(verbose)
 
@@ -38,6 +39,23 @@ class LoRaWANotaa(LoRa):
             print("nwskey = {}".format(lorawan.derive_nwskey(devnonce)))
             print("appskey = {}".format(lorawan.derive_appskey(devnonce)))
             print("\n")
+            if not self.keys_written:
+                old_keys = open('keys.py', 'r')
+                new_keys = open('keys2.py', 'w')
+                for line in old_keys:
+                    if line.split(' ')[0] in ['deveui', 'appeui', 'appkey']:
+                        new_keys.write(line)
+                new_keys.write("devaddr = {}\n".format(lorawan.get_devaddr()))
+                new_keys.write("nwskey = {}\n".format(lorawan.derive_nwskey(devnonce)))
+                new_keys.write("appskey = {}\n".format(lorawan.derive_appskey(devnonce)))
+                self.keys_written = True;
+                new_keys.close()
+                old_keys.close()
+                rename('keys2.py', 'keys.py')
+                with open('.last_frame', 'w') as f:
+                    f.write("0")
+                print("Reset frame counter to 0")
+
             sys.exit(0)
 
         print("Got LoRaWAN message continue listen for join accept")
